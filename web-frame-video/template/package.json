@@ -1,0 +1,13 @@
+{
+  "name": "web-frame-video",
+  "private": true,
+  "description": "网页逐帧截图出片：seek(t) 驱动画面，代码合成音乐，Playwright 截图，ffmpeg 编码",
+  "scripts": {
+    "audio": "node audio.js",
+    "still": "node render.js --still",
+    "render": "node audio.js && node render.js"
+  },
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}

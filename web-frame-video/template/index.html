@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>MakerOS 产品介绍</title>
+<style>
+@font-face { font-family: 'EB Garamond'; src: url(assets/EBGaramond-Bold.woff2) format('woff2'); font-weight: 700; }
+:root {
+  --bg: #F6F5F1; --ink: #18181B; --soft: #52525B; --muted: #71717A; --faint: #A1A1AA;
+  --line: #E4E4E7; --fill: #F4F4F5; --red: #CD402B; --redTint: rgba(205, 64, 43, .14);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); overflow: hidden; }
+body { font-family: "PingFang SC", "Hiragino Sans GB", sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); transform-origin: 0 0; }
+#bgdots { position: absolute; inset: -40px; background-image: radial-gradient(#D6D3CB 1.3px, transparent 1.4px); background-size: 34px 34px; opacity: .55; }
+.scene { position: absolute; inset: 0; }
+.brand { font-family: 'EB Garamond', Georgia, serif; font-weight: 700; }
+.abs { position: absolute; }
+img { display: block; }
+
+#mark { position: absolute; left: 80px; top: 52px; font-size: 38px; letter-spacing: -.01em; }
+
+/* ---------- 开场 ---------- */
+#s1-head { position: absolute; left: 0; right: 0; top: 470px; text-align: center; font-size: 92px; font-weight: 600; letter-spacing: .02em; }
+#s1-head span { display: inline-block; white-space: pre; }
+#s1-wordwrap { position: absolute; left: 0; right: 0; top: 368px; height: 290px; overflow: hidden; text-align: center; }
+#s1-word { font-size: 250px; line-height: 290px; letter-spacing: -.015em; display: inline-block; }
+#s1-bar { position: absolute; left: 50%; top: 668px; width: 120px; height: 8px; margin-left: -60px; border-radius: 4px; background: var(--red); transform-origin: 50% 50%; }
+#s1-sub { position: absolute; left: 0; right: 0; top: 716px; text-align: center; font-size: 44px; color: var(--soft); letter-spacing: .08em; }
+
+/* ---------- 左栏说明 ---------- */
+.lcol { position: absolute; left: 120px; top: 0; bottom: 0; width: 620px; display: flex; flex-direction: column; justify-content: center; }
+.idx { font-size: 30px; font-weight: 600; color: var(--red); letter-spacing: .12em; }
+.ttl { margin-top: 18px; font-size: 88px; font-weight: 600; line-height: 1.15; letter-spacing: .01em; }
+.cap { margin-top: 22px; font-size: 36px; line-height: 1.5; color: var(--soft); }
+.chips { margin-top: 44px; display: flex; flex-wrap: wrap; gap: 14px; }
+.chips span { font-size: 24px; padding: 10px 22px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--soft); }
+.lcol > * { will-change: transform, opacity; }
+
+/* ---------- 应用窗口 ---------- */
+.win { position: absolute; left: 790px; top: 170px; width: 1020px; height: 740px; background: #fff; border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 40px 90px -30px rgba(24, 24, 27, .22), 0 2px 6px rgba(24, 24, 27, .04); overflow: hidden; }
+.bar { height: 48px; border-bottom: 1px solid var(--line); display: flex; align-items: center; padding: 0 20px; gap: 8px; background: #FCFCFB; }
+.bar i { width: 12px; height: 12px; border-radius: 50%; background: #E4E4E7; }
+.url { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); height: 28px; padding: 0 22px; border-radius: 14px; background: var(--fill); font-size: 16px; line-height: 28px; color: var(--muted); letter-spacing: .02em; }
+.body { position: absolute; left: 0; top: 48px; right: 0; bottom: 0; }
+
+.card { position: absolute; background: #fff; border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 10px 30px -12px rgba(24, 24, 27, .16); }
+.inputline { position: absolute; left: 30px; right: 30px; top: 26px; font-size: 26px; line-height: 40px; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.ph { color: var(--faint); }
+.caret { display: inline-block; width: 2px; height: 30px; background: var(--ink); margin-left: 1px; vertical-align: middle; }
+.row { position: absolute; left: 20px; right: 20px; bottom: 18px; height: 52px; display: flex; align-items: center; gap: 12px; }
+.pill { height: 48px; padding: 0 18px; border-radius: 24px; background: var(--fill); display: inline-flex; align-items: center; gap: 10px; font-size: 21px; font-weight: 500; color: var(--ink); position: relative; }
+.pill img { width: 24px; height: 24px; }
+.pill svg { width: 18px; height: 18px; }
+.send { margin-left: auto; width: 54px; height: 54px; border-radius: 50%; background: var(--ink); display: flex; align-items: center; justify-content: center; }
+.send svg { width: 26px; height: 26px; }
+
+/* 多模型对话 */
+#s2-hello { position: absolute; left: 0; right: 0; top: 190px; text-align: center; font-size: 42px; font-weight: 600; }
+#s2-card { left: 70px; top: 360px; width: 880px; height: 200px; }
+#s2-drop { position: absolute; left: 14px; bottom: 82px; width: 360px; padding: 8px; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 24px 60px -18px rgba(24, 24, 27, .28); transform-origin: 20% 100%; }
+#s2-hl { position: absolute; left: 8px; right: 8px; height: 44px; border-radius: 12px; background: var(--fill); }
+.mrow { position: relative; height: 44px; display: flex; align-items: center; gap: 12px; padding: 0 12px; font-size: 21px; font-weight: 500; }
+.mrow img { width: 24px; height: 24px; }
+.mrow em { font-style: normal; font-size: 16px; color: var(--muted); font-weight: 400; }
+.mrow .ok { margin-left: auto; width: 20px; height: 20px; }
+.pillswap { position: relative; display: inline-flex; align-items: center; gap: 10px; }
+
+/* 智能体 */
+#s3-card { left: 70px; top: 80px; width: 880px; height: 180px; }
+#s3-chip { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px 0 6px; border-radius: 20px; background: var(--redTint); color: var(--red); font-size: 22px; font-weight: 600; }
+#s3-chip img { width: 30px; height: 30px; border-radius: 50%; }
+#s3-drop { position: absolute; left: 70px; top: 276px; width: 600px; padding: 12px 10px; background: #fff; border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 24px 60px -18px rgba(24, 24, 27, .28); overflow: hidden; transform-origin: 20% 0; }
+#s3-drop h6 { font-size: 17px; font-weight: 500; color: var(--muted); padding: 4px 14px 10px; letter-spacing: .06em; }
+.arow { height: 86px; display: flex; align-items: center; gap: 16px; padding: 0 14px; border-radius: 14px; overflow: hidden; }
+.arow img { width: 58px; height: 58px; border-radius: 50%; flex: none; }
+.arow b { display: block; font-size: 24px; font-weight: 600; }
+.arow p { font-size: 18px; color: var(--muted); margin-top: 4px; white-space: nowrap; }
+#s3-status { position: absolute; left: 70px; top: 290px; display: flex; align-items: center; gap: 14px; font-size: 22px; color: var(--soft); }
+#s3-status img { width: 44px; height: 44px; border-radius: 50%; }
+.dots i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--faint); margin-left: 5px; }
+
+/* 创作编辑器 */
+#s4-chat { position: absolute; left: 0; top: 0; bottom: 0; width: 380px; background: #FAFAF9; border-right: 1px solid var(--line); padding: 30px 24px; }
+.ububble { margin-left: auto; width: fit-content; max-width: 300px; padding: 14px 18px; border-radius: 18px 18px 4px 18px; background: var(--ink); color: #fff; font-size: 20px; line-height: 1.55; }
+.anote { margin-top: 22px; font-size: 20px; line-height: 1.6; color: var(--soft); }
+.vcard { margin-top: 18px; padding: 16px 18px; border-radius: 14px; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; gap: 14px; }
+.vcard .ic { width: 40px; height: 40px; border-radius: 10px; background: var(--redTint); display: flex; align-items: center; justify-content: center; }
+.vcard b { font-size: 20px; display: block; }
+.vcard p { font-size: 16px; color: var(--muted); margin-top: 2px; }
+#s4-doc { position: absolute; left: 380px; top: 0; right: 0; bottom: 0; }
+#s4-tools { position: absolute; right: 24px; top: 20px; display: flex; gap: 10px; }
+#s4-tools span { height: 40px; line-height: 40px; padding: 0 18px; border-radius: 20px; border: 1px solid var(--line); font-size: 18px; color: var(--soft); }
+#s4-tools span.dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+#s4-text { position: absolute; left: 56px; right: 56px; top: 110px; }
+#s4-title { font-size: 40px; font-weight: 600; min-height: 56px; }
+.dp { position: relative; margin-top: 62px; font-size: 26px; line-height: 1.8; color: #27272A; min-height: 46px; }
+#s4-p1 { margin-top: 28px; }
+#s4-sel { background-image: linear-gradient(var(--redTint), var(--redTint)); background-repeat: no-repeat; background-size: 0% 100%; border-radius: 4px; }
+#s4-menu { position: absolute; left: 0; top: -56px; height: 48px; padding: 0 10px; border-radius: 14px; background: var(--ink); display: flex; align-items: center; transform-origin: 20% 100%; box-shadow: 0 16px 40px -12px rgba(0, 0, 0, .4); }
+#s4-menu span { color: #fff; font-size: 18px; padding: 0 16px; }
+#s4-menu span + span { border-left: 1px solid #3F3F46; }
+
+/* AI 生图 */
+#s5-title { position: absolute; left: 0; right: 0; top: 34px; text-align: center; font-size: 36px; font-weight: 700; }
+#s5-title em { font-style: normal; color: var(--red); }
+#s5-card { left: 70px; top: 104px; width: 880px; height: 176px; }
+#s5-card .inputline { font-size: 24px; }
+.thumb { width: 30px !important; height: 30px !important; border-radius: 8px; object-fit: cover; }
+#s5-gal { position: absolute; left: 70px; top: 306px; width: 880px; display: flex; gap: 20px; }
+.gcol { width: 205px; display: flex; flex-direction: column; gap: 20px; }
+.gcard { position: relative; width: 205px; border-radius: 14px; overflow: hidden; background: var(--fill); }
+.gcard img { width: 100%; height: 100%; object-fit: cover; }
+.gcard .load { position: absolute; inset: 0; background: linear-gradient(100deg, #F1F1F2 30%, #FAFAFA 50%, #F1F1F2 70%); background-size: 300% 100%; display: flex; align-items: flex-end; padding: 14px; font-size: 16px; color: var(--muted); }
+.gmeta { margin-top: 10px; font-size: 16px; color: var(--muted); }
+
+/* 专家工作台 */
+#s6-tabs { position: absolute; left: 60px; top: 36px; display: flex; gap: 36px; font-size: 26px; font-weight: 600; }
+#s6-tabs span { padding-bottom: 12px; color: var(--faint); }
+#s6-tabs span.on { color: var(--ink); border-bottom: 3px solid var(--ink); }
+#s6-desc { position: absolute; left: 60px; top: 104px; font-size: 20px; color: var(--muted); }
+#s6-grid { position: absolute; left: 60px; top: 160px; width: 900px; display: grid; grid-template-columns: repeat(3, 280px); gap: 28px 30px; }
+.xcard { height: 222px; border-radius: 20px; background: #fff; border: 1px solid var(--line); padding: 26px 24px; box-shadow: 0 4px 14px -8px rgba(24, 24, 27, .12); }
+.xcard img { width: 76px; height: 76px; border-radius: 50%; object-fit: cover; }
+.xcard b { display: block; margin-top: 18px; font-size: 26px; font-weight: 600; }
+.xcard span { display: inline-block; margin-top: 10px; font-size: 17px; color: var(--muted); background: var(--fill); padding: 4px 12px; border-radius: 999px; }
+
+/* 总览 */
+#s7-title { position: absolute; left: 0; right: 0; top: 300px; text-align: center; font-size: 60px; font-weight: 600; }
+#s7-row { position: absolute; left: 0; right: 0; top: 460px; display: flex; justify-content: center; gap: 46px; }
+.tile { width: 150px; text-align: center; }
+.tile img { width: 150px; height: 150px; border-radius: 38px; box-shadow: 0 18px 40px -18px rgba(24, 24, 27, .3); }
+.tile b { display: block; margin-top: 20px; font-size: 26px; font-weight: 600; }
+
+/* 收尾 */
+#s8-word { position: absolute; left: 0; right: 0; top: 270px; text-align: center; font-size: 230px; line-height: 1; letter-spacing: -.015em; }
+#s8-tag { position: absolute; left: 0; right: 0; top: 540px; text-align: center; font-size: 44px; color: var(--soft); letter-spacing: .08em; }
+#s8-pillwrap { position: absolute; left: 0; right: 0; top: 650px; text-align: center; }
+#s8-pill { display: inline-block; height: 96px; line-height: 96px; padding: 0 64px; border-radius: 48px; background: var(--ink); color: #fff; font-size: 44px; font-weight: 600; letter-spacing: .04em; box-shadow: 0 24px 50px -20px rgba(24, 24, 27, .5); }
+#s8-sub { position: absolute; left: 0; right: 0; top: 792px; text-align: center; font-size: 30px; color: var(--muted); letter-spacing: .06em; }
+#s8-sub b { color: var(--red); font-weight: 600; }
+
+/* 鼠标 */
+#cursor { position: absolute; left: 0; top: 0; width: 44px; height: 52px; transform-origin: 4px 4px; z-index: 50; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .25)); }
+#ripple { position: absolute; left: 0; top: 0; width: 80px; height: 80px; margin: -40px 0 0 -40px; border-radius: 50%; border: 3px solid var(--red); z-index: 49; }
+
+/* 配音字幕（TL.voice.subtitles 为 true 时显示） */
+#subtitle { position: absolute; left: 0; right: 0; bottom: 56px; text-align: center; z-index: 40; pointer-events: none; }
+#subtitle span { display: inline-block; max-width: 1500px; padding: 12px 30px 14px; border-radius: 16px; background: rgba(24, 24, 27, .72); color: #fff; font-size: 38px; line-height: 1.4; letter-spacing: .02em; }
+
+/* 预览模式的播放条 */
+#ctrl { position: fixed; left: 0; right: 0; bottom: 0; height: 44px; background: rgba(24, 24, 27, .85); display: none; align-items: center; gap: 12px; padding: 0 16px; color: #fff; font: 14px system-ui; z-index: 99; }
+#ctrl input { flex: 1; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bgdots"></div>
+  <div id="mark" class="brand">MakerOS</div>
+
+  <!-- 01 开场 -->
+  <section class="scene" id="s1">
+    <div id="s1-head">用 AI 加速你的事业</div>
+    <div id="s1-wordwrap"><div id="s1-word" class="brand">MakerOS</div></div>
+    <div id="s1-bar"></div>
+    <div id="s1-sub">创业者与企业团队的 AI 工作台</div>
+  </section>
+
+  <!-- 02 多模型对话 -->
+  <section class="scene" id="s2">
+    <div class="lcol">
+      <div class="idx">01</div>
+      <div class="ttl">多模型对话</div>
+      <div class="cap">九家主流模型，一个对话里随时切换</div>
+      <div class="chips"><span>ChatGPT · Claude · Gemini</span><span>DeepSeek · Kimi · Qwen</span><span>联网搜索</span></div>
+    </div>
+    <div class="win"><div class="bar"><i></i><i></i><i></i><div class="url">makeros.cn/new</div></div>
+      <div class="body">
+        <div id="s2-hello">今天想做点什么？</div>
+        <div class="card" id="s2-card">
+          <div class="inputline"><span class="ph" id="s2-ph">说说你的想法，或 @ 一位智能体…</span><span id="s2-text"></span><i class="caret" id="s2-caret"></i></div>
+          <div class="row">
+            <div class="pill" id="s2-pill">
+              <span class="pillswap" id="s2-pa"><img src="assets/claude-color.svg">Claude</span>
+              <span class="pillswap" id="s2-pb" style="position:absolute;left:18px;top:0;bottom:0"><img src="assets/gemini-color.svg">Gemini</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#71717A" stroke-width="2.4" stroke-linecap="round" id="s2-chev"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="#52525B" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></svg>联网</div>
+            <div class="send" id="s2-send"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+          </div>
+          <div id="s2-drop">
+            <div id="s2-hl"></div>
+            <div class="mrow" id="s2-row-0"><img src="assets/openai.svg">ChatGPT <em>OpenAI</em></div>
+            <div class="mrow" id="s2-row-1"><img src="assets/claude-color.svg">Claude <em>Anthropic</em><svg class="ok" id="s2-ok1" viewBox="0 0 24 24" fill="none" stroke="#18181B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></div>
+            <div class="mrow" id="s2-row-2"><img src="assets/gemini-color.svg">Gemini <em>Google</em><svg class="ok" id="s2-ok2" viewBox="0 0 24 24" fill="none" stroke="#18181B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></div>
+            <div class="mrow" id="s2-row-3"><img src="assets/deepseek.svg">DeepSeek <em>深度求索</em></div>
+            <div class="mrow" id="s2-row-4"><img src="assets/grok.svg">Grok <em>xAI</em></div>
+            <div class="mrow" id="s2-row-5"><img src="assets/kimi.svg">Kimi <em>月之暗面</em></div>
+            <div class="mrow" id="s2-row-6"><img src="assets/qwen.svg">Qwen <em>阿里云</em></div>
+            <div class="mrow" id="s2-row-7"><img src="assets/doubao.svg">豆包 <em>字节跳动</em></div>
+            <div class="mrow" id="s2-row-8"><img src="assets/zai.svg">GLM <em>智谱</em></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 智能体 -->
+  <section class="scene" id="s3">
+    <div class="lcol">
+      <div class="idx">02</div>
+      <div class="ttl">智能体</div>
+      <div class="cap">输入 @，把任务交给擅长的助手</div>
+      <div class="chips"><span>品牌内容</span><span>营销文案</span><span>私域运营</span><span>翻译</span></div>
+    </div>
+    <div class="win"><div class="bar"><i></i><i></i><i></i><div class="url">makeros.cn/new</div></div>
+      <div class="body">
+        <div class="card" id="s3-card">
+          <div class="inputline"><span id="s3-chip"><img src="assets/redbook.webp">小红书笔记助手</span><span class="ph" id="s3-ph">说说你的想法，或 @ 一位智能体…</span><span id="s3-text"></span><i class="caret" id="s3-caret"></i></div>
+          <div class="row">
+            <div class="pill"><img src="assets/claude-color.svg">Claude</div>
+            <div class="send" id="s3-send"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+          </div>
+        </div>
+        <div id="s3-drop">
+          <h6>智能体</h6>
+          <div class="arow" id="s3-row-0"><img src="assets/writebot.webp"><div><b>长文写作助手</b><p>对话式引导，写出结构完整的深度长文</p></div></div>
+          <div class="arow" id="s3-row-1"><img src="assets/redbook.webp"><div><b>小红书笔记助手</b><p>给主题，出标题、正文与话题标签</p></div></div>
+          <div class="arow" id="s3-row-2"><img src="assets/promptdesigner.webp"><div><b>提示词设计专家</b><p>把模糊需求写成结构化的提示词</p></div></div>
+          <div class="arow" id="s3-row-3"><img src="assets/saleletter.webp"><div><b>产品发售信</b><p>按痛点、承诺、证据、限时四段成稿</p></div></div>
+        </div>
+        <div id="s3-status"><img src="assets/redbook.webp">小红书笔记助手 正在写作<span class="dots"><i></i><i></i><i></i></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 创作编辑器 -->
+  <section class="scene" id="s4">
+    <div class="lcol">
+      <div class="idx">03</div>
+      <div class="ttl">创作编辑器</div>
+      <div class="cap">左边对话，右边直接成稿</div>
+      <div class="chips"><span>划词改写</span><span>排版主题</span><span>同步公众号</span></div>
+    </div>
+    <div class="win"><div class="bar"><i></i><i></i><i></i><div class="url">makeros.cn/editor</div></div>
+      <div class="body">
+        <div id="s4-chat">
+          <div class="ububble" id="s4-u">写一篇公众号开头：小团队怎么用 AI 省时间</div>
+          <div class="anote" id="s4-a">好的，开头三段已写进右侧正文。</div>
+          <div class="vcard" id="s4-v"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#CD402B" stroke-width="2.2" stroke-linecap="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg></div><div><b>版本 2</b><p>已写入正文</p></div></div>
+        </div>
+        <div id="s4-doc">
+          <div id="s4-tools"><span>排版</span><span>配图</span><span class="dark">同步公众号</span></div>
+          <div id="s4-text">
+            <div id="s4-title"></div>
+            <div class="dp" id="s4-p1"></div>
+            <div class="dp" id="s4-p2wrap"><div id="s4-menu"><span>改写</span><span>扩写</span><span>缩写</span><span>润色</span></div><span id="s4-sel"></span></div>
+            <div class="dp" id="s4-p3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 AI 生图 -->
+  <section class="scene" id="s5">
+    <div class="lcol">
+      <div class="idx">04</div>
+      <div class="ttl">AI 生图工作台</div>
+      <div class="cap">一句描述，直出 4K 高清图</div>
+      <div class="chips"><span>海报</span><span>配图</span><span>封面</span><span>图片式 PPT</span></div>
+    </div>
+    <div class="win"><div class="bar"><i></i><i></i><i></i><div class="url">makeros.cn/image</div></div>
+      <div class="body">
+        <div id="s5-title">你来想象，<em>AI 来作画</em></div>
+        <div class="card" id="s5-card">
+          <div class="inputline"><span class="ph" id="s5-ph">描述你想要的画面…</span><span id="s5-text"></span><i class="caret" id="s5-caret"></i></div>
+          <div class="row">
+            <div class="pill"><img class="thumb" src="assets/image-watercolor-1x1.webp">水彩</div>
+            <div class="pill">3:4</div>
+            <div class="pill">GPT Image · 4K</div>
+            <div class="send" id="s5-send"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+          </div>
+        </div>
+        <div id="s5-gal">
+          <div class="gcol"><div class="gcard" id="s5-g0" style="height:273px"><img src="assets/image-watercolor.webp"><div class="load"></div></div><div class="gmeta">水彩 · 3:4 · 4K</div></div>
+          <div class="gcol"><div class="gcard" id="s5-g1" style="height:273px"><img src="assets/image-flat.webp"><div class="load"></div></div><div class="gmeta">扁平插画 · 3:4 · 4K</div></div>
+          <div class="gcol"><div class="gcard" id="s5-g2" style="height:273px"><img src="assets/image-business.webp"><div class="load"></div></div><div class="gmeta">商务质感 · 3:4 · 4K</div></div>
+          <div class="gcol"><div class="gcard" id="s5-g3" style="height:115px"><img src="assets/ppt-cover.webp"><div class="load"></div></div><div class="gcard" id="s5-g4" style="height:115px"><img src="assets/ppt-chart.webp"><div class="load"></div></div><div class="gmeta" style="margin-top:-8px">图片式 PPT · 16:9</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 专家工作台 -->
+  <section class="scene" id="s6">
+    <div class="lcol">
+      <div class="idx">05</div>
+      <div class="ttl">专家工作台</div>
+      <div class="cap">按行业备好整套工具</div>
+      <div class="chips"><span>教培：备课 · 批改 · 招生</span><span>自媒体：选题 · 写作 · 配图</span></div>
+    </div>
+    <div class="win"><div class="bar"><i></i><i></i><i></i><div class="url">makeros.cn/teacher</div></div>
+      <div class="body">
+        <div id="s6-tabs"><span class="on">教培行业</span><span>自媒体内容专家</span></div>
+        <div id="s6-desc">学生、批改、备课、家校沟通、招生内容</div>
+        <div id="s6-grid">
+          <div class="xcard" id="s6-card-0"><img src="assets/essay-grading.webp"><b>作文批改</b><span>评分报告</span></div>
+          <div class="xcard" id="s6-card-1"><img src="assets/teacher-lesson.webp"><b>讲义生成</b><span>大纲 + 正文</span></div>
+          <div class="xcard" id="s6-card-2"><img src="assets/student-growth-tree.webp"><b>学生成长树</b><span>成长时间线</span></div>
+          <div class="xcard" id="s6-card-3"><img src="assets/comparison-poster.webp"><b>成长对比图</b><span>招生海报</span></div>
+          <div class="xcard" id="s6-card-4"><img src="assets/teacher-feedback.webp"><b>课堂反馈</b><span>家长反馈卡</span></div>
+          <div class="xcard" id="s6-card-5"><img src="assets/teacher-students.webp"><b>学生管理</b><span>学生档案</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 能力总览 -->
+  <section class="scene" id="s7">
+    <div id="s7-title">全部 AI 工作，一个入口</div>
+    <div id="s7-row">
+      <div class="tile" id="s7-t0"><img src="assets/chat.webp"><b>多模型对话</b></div>
+      <div class="tile" id="s7-t1"><img src="assets/wand.webp"><b>智能体</b></div>
+      <div class="tile" id="s7-t2"><img src="assets/pen.webp"><b>创作编辑器</b></div>
+      <div class="tile" id="s7-t3"><img src="assets/easel.webp"><b>AI 生图</b></div>
+      <div class="tile" id="s7-t4"><img src="assets/megaphone.webp"><b>专家工作台</b></div>
+      <div class="tile" id="s7-t5"><img src="assets/book.webp"><b>胶囊小课</b></div>
+    </div>
+  </section>
+
+  <!-- 08 收尾 -->
+  <section class="scene" id="s8">
+    <div id="s8-word" class="brand">MakerOS</div>
+    <div id="s8-tag">创业者与企业团队的 AI 工作台</div>
+    <div id="s8-pillwrap"><span id="s8-pill">makeros.cn</span></div>
+    <div id="s8-sub">注册即送 <b>1,000 积分</b> · 国内直接使用</div>
+  </section>
+
+  <div id="subtitle"><span></span></div>
+  <div id="ripple"></div>
+  <svg id="cursor" viewBox="0 0 44 52"><path d="M4 4 L4 40 L13.5 31 L20 46 L27 43 L20.5 28.5 L34 28.5 Z" fill="#18181B" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
+</div>
+
+<div id="ctrl"><button id="play">暂停</button><input id="scrub" type="range" min="0" max="45" step="0.01" value="0"><span id="tlabel">0.00</span></div>
+<audio id="music" src="out/music.wav" preload="auto"></audio>
+
+<script src="timeline.js"></script>
+<script src="voice.js"></script>
+<script src="scenes.js"></script>
+</body>
+</html>

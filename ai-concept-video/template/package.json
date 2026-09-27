@@ -1,0 +1,15 @@
+{
+  "name": "ai-concept-video",
+  "private": true,
+  "description": "AI 科普讲解视频：分镜脚本 → 配音定节奏 → 网页逐帧截图 → ffmpeg 出片",
+  "scripts": {
+    "plan": "node plan.js",
+    "audio": "node audio.js",
+    "check": "node render.js --still auto",
+    "render": "node render.js",
+    "all": "node plan.js && node audio.js && node render.js --still auto && node render.js"
+  },
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}
