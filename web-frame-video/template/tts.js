@@ -1,7 +1,7 @@
 // 配音：按 timeline.js 的 TL.voice 逐句合成，生成 out/voice.wav（与画面同一条时间轴）和 voice.js（字幕与时长）。
 //   node tts.js           合成缺失的句子（按文本 + 音色 + 语速做缓存，改哪句只重合成哪句）
 //   node tts.js --check   合成后再用语音识别回听每一句，和原文比对，错读、漏读会被标出来
-// 模型：MiniMax Speech 2.8 HD，经 OpenAI 兼容接口 /v1/audio/speech 调用，地址读 TTS_BASE_URL（默认 apilio 中转），key 读 TTS_API_KEY 或 APILIO_API_KEY。
+// 模型：MiniMax Speech 2.8 HD，经 OpenAI 兼容接口 /v1/audio/speech 调用，地址读 TTS_BASE_URL，key 读 TTS_API_KEY。
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -10,16 +10,13 @@ const TL = require('./timeline.js');
 
 const ROOT = __dirname;
 const OUT = path.join(ROOT, 'out', 'voice');
-const BASE = process.env.TTS_BASE_URL || process.env.APILIO_BASE_URL || 'https://api.apilio.ai';
+const BASE = (process.env.TTS_BASE_URL || '').replace(/\/+$/, '');
 const CHECK = process.argv.includes('--check');
 
 function apiKey() {
-  const env = process.env.TTS_API_KEY || process.env.APILIO_API_KEY;
-  if (env) return env;
-  const f = path.join(process.env.HOME, '.tuzi-skills', '.env');
-  const m = fs.existsSync(f) && fs.readFileSync(f, 'utf8').match(/^APILIO_API_KEY=(.+)$/m);
-  if (!m) throw new Error('找不到配音 key：设置环境变量 TTS_API_KEY（或 APILIO_API_KEY）');
-  return m[1].trim();
+  if (!BASE) throw new Error('找不到配音接口地址：设置环境变量 TTS_BASE_URL（提供 speech-2.8-hd 的 OpenAI 兼容服务）');
+  if (!process.env.TTS_API_KEY) throw new Error('找不到配音 key：设置环境变量 TTS_API_KEY');
+  return process.env.TTS_API_KEY;
 }
 const KEY = apiKey();
 

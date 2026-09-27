@@ -21,7 +21,7 @@ OUTPUT_DIR="${VIDEO_OUTPUT_DIR:-$HOME/Movies/ai-video}"   # 成片目录，设�
 
 依赖：Node 18+、ffmpeg（含 ffprobe）。npm 或 Playwright 下载慢时，在命令前加 `HTTPS_PROXY=<代理地址>`。
 
-配音接口：OpenAI 兼容的 `/v1/audio/speech`，模型 MiniMax `speech-2.8-hd`。地址读 `TTS_BASE_URL`（默认 `https://api.apilio.ai`，作者使用的中转服务），key 读 `TTS_API_KEY`（也认 `APILIO_API_KEY`，或 `~/.tuzi-skills/.env` 里的 `APILIO_API_KEY`）。回听校对用同一个服务的 `whisper-1`。
+配音接口：OpenAI 兼容的 `/v1/audio/speech`，模型 MiniMax `speech-2.8-hd`。地址读 `TTS_BASE_URL`（任何提供 `speech-2.8-hd` 的 OpenAI 兼容服务），key 读 `TTS_API_KEY`。回听校对用同一个服务的 `whisper-1`。
 
 ## 文件分工
 

@@ -85,7 +85,7 @@ node render.js                     # 超过 5 分钟的长片用 nohup 脱离会
 
 ### 6.5 配音（可选）
 
-模型选定 **MiniMax Speech 2.8 HD**：2026 年 Artificial Analysis 与 Hugging Face 两个 TTS 盲听榜都排第一，中文语气、停顿、多音字处理最好；走 OpenAI 兼容接口 `/v1/audio/speech`。接口地址读 `TTS_BASE_URL`（默认 `https://api.apilio.ai`，作者使用的中转服务，任何提供 `speech-2.8-hd` 的 OpenAI 兼容服务都可以），key 读 `TTS_API_KEY`（也认 `APILIO_API_KEY`）。音色、语速、写稿节奏见 `references/voiceover.md`。
+模型选定 **MiniMax Speech 2.8 HD**：2026 年 Artificial Analysis 与 Hugging Face 两个 TTS 盲听榜都排第一，中文语气、停顿、多音字处理最好；走 OpenAI 兼容接口 `/v1/audio/speech`。接口地址读 `TTS_BASE_URL`（任何提供 `speech-2.8-hd` 的 OpenAI 兼容服务都可以），key 读 `TTS_API_KEY`。音色、语速、写稿节奏见 `references/voiceover.md`。
 
 1. 在 `timeline.js` 写 `TL.voice`：`{ model: 'speech-2.8-hd', voice: 'presenter_female', speed: 1.05, subtitles: true, lines: [{ id: 'v1', at: 1.6, text: '…' }] }`。每句放在对应场景开头后 0.3–0.6 秒，一场一句为主。
 2. `node tts.js --check`：合成、打印每句起止时间；句子互相压住会报错并给出该挪到几秒；`--check` 用 whisper 回听，比对不到 85% 标「可疑」。**识别模型分不清同音词**（「一图」会听成「意图」），可疑句先看是不是同音误报，真错读再改写法（数字写成汉字、英文缩写之间留空）。

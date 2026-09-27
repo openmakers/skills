@@ -2,7 +2,7 @@
 //   node plan.js          逐句合成配音（按文本 + 音色 + 语速缓存，改哪句只重合成哪句），用每句真实时长排出场次、元素出现时刻与字幕
 //   node plan.js --dry    不调配音接口，按字数估算时长，先检查画面排版
 //   node plan.js --check  合成后用语音识别回听这次新合成的句子，标出错读、漏读（--check-all 回听全部）
-// 配音模型：MiniMax Speech 2.8 HD，经 OpenAI 兼容接口调用，地址读 TTS_BASE_URL（默认 apilio 中转），key 读 TTS_API_KEY 或 APILIO_API_KEY。
+// 配音模型：MiniMax Speech 2.8 HD，经 OpenAI 兼容接口调用，地址读 TTS_BASE_URL，key 读 TTS_API_KEY。
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -11,7 +11,7 @@ const { execFile } = require('child_process');
 const ROOT = __dirname;
 const OUT = path.join(ROOT, 'out');
 const VOICE_DIR = path.join(OUT, 'voice');
-const BASE = process.env.TTS_BASE_URL || process.env.APILIO_BASE_URL || 'https://api.apilio.ai';
+const BASE = (process.env.TTS_BASE_URL || '').replace(/\/+$/, '');
 const DRY = process.argv.includes('--dry');
 const CHECK_ALL = process.argv.includes('--check-all');
 const CHECK = CHECK_ALL || process.argv.includes('--check');
@@ -82,12 +82,9 @@ function parseLine(raw, si, li) {
 
 // ---------- 配音接口 ----------
 function apiKey() {
-  const env = process.env.TTS_API_KEY || process.env.APILIO_API_KEY;
-  if (env) return env;
-  const f = path.join(process.env.HOME, '.tuzi-skills', '.env');
-  const m = fs.existsSync(f) && fs.readFileSync(f, 'utf8').match(/^APILIO_API_KEY=(.+)$/m);
-  if (!m) throw new Error('找不到配音 key：设置环境变量 TTS_API_KEY（或 APILIO_API_KEY）');
-  return m[1].trim();
+  if (!BASE) throw new Error('找不到配音接口地址：设置环境变量 TTS_BASE_URL（提供 speech-2.8-hd 的 OpenAI 兼容服务）');
+  if (!process.env.TTS_API_KEY) throw new Error('找不到配音 key：设置环境变量 TTS_API_KEY');
+  return process.env.TTS_API_KEY;
 }
 const run = (cmd, args) => new Promise((resolve, reject) => {
   execFile(cmd, args, { maxBuffer: 64 * 1024 * 1024 }, (err, stdout, stderr) => (err ? reject(new Error(`${cmd} 失败：${stderr || err.message}`)) : resolve(stdout)));
