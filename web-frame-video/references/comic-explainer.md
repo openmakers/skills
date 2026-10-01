@@ -14,7 +14,7 @@
 | 公式 | 逐块写出（每块从 1.5 倍、上方 18px 落下），分数线、根号横线用 `scaleX` 从左画出；a / b / c 全片固定红 / 蓝 / 绿 |
 | 强调 | 盖章（2.4 倍砸下）、红色大叉、答案黄底描边高亮、集中线（放射三角 + 椭圆遮罩淡出，每 0.125 秒抖 0.4°） |
 | 图形 | 抛物线用 `pathLength="1"` + `stroke-dashoffset` 画出，交点红点弹出 |
-| 字体 | 中文站酷快乐体（OFL，GitHub google/fonts 仓库 `ofl/zcoolkuaile` 下载 TTF 放 assets）；公式数字 Arial Rounded MT Bold，字母 Georgia 粗斜体 |
+| 字体 | 低龄向用站酷快乐体（OFL，google/fonts `ofl/zcoolkuaile`）；成人向、严肃主题按 `fonts.md` 用「马善政毛笔标题 + 思源黑体正文」。公式数字 Arial Rounded MT Bold，字母 Georgia 粗斜体 |
 
 ## 版式
 
@@ -69,6 +69,56 @@
 - 出图后用 `ocr-to-text` 反查是否混进乱码文字。
 - 批量出完按分辨率逐张校验，降质的换文件名重出，不覆盖。
 
+---
+
+## 手绘涂鸦变体（学科知识点讲解 / 白纸方格 + 马克笔）
+
+样例：高中圆锥曲线（90 秒，6 场）。
+
+同样是只换皮不换机制：时间轴、`data-slam/pop/stamp/cap/rise/talk` 自校验、`seek(t)` 驱动全部照旧，只把纸面、描边、配色、图形画法换掉。
+
+| 元素 | 做法 |
+|---|---|
+| 纸面 | 纯白 `#FFFFFF` + `.dots` 两组 1.5px 线性渐变做 48px 方格（`#EAF0F7`），随 t 平移 `translate(-(t*5)%48, -(t*2.5)%48)`，给纯白底一点呼吸 |
+| 手绘边 | 每个 `.panel/.cap/.kcard/.sumcard/.mini` 注入一个 `.hw` SVG，**描两遍**：第一遍 inset 3.2 / 3.6px / 不透明，第二遍 inset 5.4 / 2.2px / `opacity .3`，像马克笔来回走了两下 |
+| 墨色 | `#2B2B33`（不用纯黑）；配色 蓝 `#4A90D9` / 绿 `#3FA981` / 红 `#E8615A` / 橙 `#F2A03D` / 紫 `#8E7CC3` / 黄 `#FFE082` |
+| 曲线 | 画两遍：正身 + `translate(2.4 -2.4)` 的 `opacity .28` 副本，伪造马克笔手感 |
+| 角色 | 马克笔简笔画（粗描边 + 大色块），比水彩版更卡通；嘴型 / 眨眼 / 呼吸 / 气泡逻辑原样保留 |
+| 字体 | 同上，站酷快乐体（手写感强，正好配这个风格） |
+
+### 手绘抖动必须确定性
+
+`let rs = 20260927` + LCG（`rs = (rs*1664525 + 1013904223) >>> 0`），`seg(x1,y1,x2,y2,amp)` 把线段切成每 80px 一段、逐点加 `±amp` 抖动、**末点不加**（保证两段首尾能接上）。种子固定 → 同一帧永远画成一样，`seek(t)` 逐帧重放不会闪。
+
+**顺序不能错**：`await document.fonts.ready` → 量尺寸画手绘边（`handFrames()`）→ 再 `window.seek(0)`。字体没到位就量，格子宽度偏小，手绘边会缩在框里。
+
+### 数学曲线按解析式采样，别硬编码路径
+
+```js
+const L = (a, b, n, f) => { let d=''; for (let i=0;i<=n;i++){ const u=a+(b-a)*i/n, p=f(u);
+  d += (i?'L':'M') + p[0].toFixed(2) + ' ' + p[1].toFixed(2); } return d; };
+// k = 一个数学单位画多少像素
+const px = (x, y) => [cx + x*k, cy - y*k];
+const curve = L(0, Math.PI*2, 160, th => px(a*Math.cos(th), b*Math.sin(th)));
+```
+
+- 曲线用 `pathLength="1"` + `stroke-dasharray="1 1"` + `stroke-dashoffset` 从 `1 → 0` 生长。
+- 动点 P 由 `ph = P(t, 起, 止) * 2π` 驱动；两侧线段每帧 `setAttribute` 重画；旁边放读数条同步显示 `|PF₁|`、`|PF₂|`——**「和 / 差 / 等是定值」必须被看见**，光画曲线学生记不住。
+- **`build()` 和 `frame()` 里的常量必须一致**：`cx / cy / ox / oy / k` 各写一遍，改一处漏一处就整图错位。抽成模块级常量最省心。
+- 准线、渐近线这类参考线用 `stroke-dasharray` 虚线，颜色和曲线区分开。
+
+### 版式：先量后改，别靠肉眼估行高
+
+- 16:9。左列 760px 放曲线分镜格（x 70–830），右列 440px 放定义 / 标准方程 / 应用图（x 860–1300），右下角常驻角色与气泡（x 1330+）。
+- **数值读出条放在分镜格外、分镜格正下方**，不要塞在格子底部：塞在里面会和曲线下沿、顶点标注（B₁ 之类）打架。
+- **曲线的说明文字放格子底部居中**（`y ≈ 500`），别放顶部——顶部要留给「F₁·F₂ 是焦点」「2a 长轴 · 2b 短轴」这类角标 chip，两者一定重叠。
+- **卡片文字会撑高**：440px 宽的卡片里两个 font 26 的 chip 并排就会换行，`scrollHeight` 比 `height` 多 60–90px，内容掉出去压住盖章。**改完必须用 `probe.js` 量一遍 `scrollHeight`，不要目测。**
+- 附属信息（`c²=a²−b²`、「渐近线 + e 区间」）宁可拆到曲线格下方**单独一格**，也不要在「标准方程」卡里硬塞。
+
+### 工具：`probe.js`（排版体检）
+
+`getBoundingClientRect()` 会被入场 `transform: scale(1.3)` / `rotate` 污染，量出来全是错的。正确做法：**先把 `#stage *` 的 `style.transform` 全部置 `none`**，再用 `offsetLeft/offsetTop` 沿 `offsetParent` 链累加到 `#stage`，同时报 `scrollHeight > offsetHeight + 2`（纵向溢出）与 `scrollWidth > offsetWidth + 2`（横向溢出）。比截图肉眼看快得多，也不会看漏。
+
 ## 配音 + 字幕
 
 - `tts.js` 按 `TL.voice.lines` 逐句合成，拼成 `out/voice.wav`，同时生成 `voice.js`（每句 `at / dur / text`）。
@@ -78,7 +128,11 @@
 - 改配音后 `node render.js --mix` 秒出，不必重拍画面。
 - `tts.js --check` 用 whisper 回听比对（字级 LCS 相似度 ≥ 85% 判「通过」）。转写服务上游会整体饱和、连续重试失败并中断整轮——这是**转写服务**的问题、不是配音的问题。务必用带**识别缓存**（`out/voice/<id>-<hash>.txt`）＋**单句失败只跳过不中断**的 `tts.js` 版本，饱和时重跑能接着上次继续，不会每次都从第 1 句重来。（模板里的 tts.js 还没有识别缓存，需要时自己加。）
 
-## 两个体检坑
+## 几个体检坑
 
 - **`subcheck.js` 判可见性必须逐级向上查祖先**：分镜格还没落下时自身 `opacity: 0`、`scale(1.3)`（`renderAnims` 在 `t < t0` 时给的就是起手值），但**子元素自己的 opacity 仍是 1**。只查元素自身，就会把「没落下的格子旁边那些隐形的图」算成与字幕重叠，报假阳性。正确做法是从元素一路 `parentElement` 查到 `body`，任一祖先 `display:none` / `opacity < 0.35` 就直接跳过。
+- **同一文件的两个 Edit 不能放在同一条消息里并发**：文件的编辑是「读—改—写」，两条并发会有一条用旧快照覆盖另一条，工具两边都报成功、但只有一条真的落盘（本模型就因此白排查了一轮「改了没生效」）。**改同一个文件一次只发一条 Edit。**
+- **图片文件名可能带 BOM**：批量生图脚本产出过 `\xEF\xBB\xBFcone-cut.png`，HTML 里写 `assets/cone-cut.png` 就静默 `ERR_FILE_NOT_FOUND`、页面上留一个空格子。出图后 `ls | cat -v` 过一遍，见到 `M-oM-;M-?` 就 `mv` 改名。
+- **`data-<attr>` 引用了页面里不存在的元素不会报错**：`R.s5` 里驱动 `.edot` 时写了 `if (dot)` 兜底，标记就永远不出现也不报错。**建 SVG 时要把驱动侧和元素侧一起写**，别只写一半。
 - **Bash 沙箱里 `ffmpeg` / `ffprobe` 常在 `/opt/homebrew/bin` 却不在 PATH**，脚本前先 `export PATH="/opt/homebrew/bin:$PATH"`，否则 `render.js` / `tts.js` 会以 `ffmpeg not found` 失败。
+

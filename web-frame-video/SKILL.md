@@ -117,6 +117,7 @@ ffprobe -v error -show_entries stream=codec_name,width,height,r_frame_rate,nb_fr
 10. **被设了 transform 的容器会变成绝对定位子元素的定位参照**：常驻层（如角色 + 对白层）一旦在 JS 里加了抖动 transform，就必须 `position:absolute; inset:0`，否则里面用 `bottom:` 定位的气泡会跑出画面。
 11. **页面事件和声音清单互相校验**：用 `data-slam` / `data-pop` / `data-stamp` 声明入场时刻时，初始化时逐个检查是否登记在 timeline 的 slams / pops / stamps 里，公式分块数也和 timeline 的 `n` 比对，不一致直接抛错——声音漏配在静帧里看不出来。
 12. **配音按句合成、按句定位**：不要整段一次合成再切，逐句合成才能拿到每句精确时长去对画面；句子之间至少留 0.15 秒。数字写成汉字、读法才可控。
+13. **截图前等所有字体到位**：每款 `@font-face` 都要 `document.fonts.load(...)`，缺一款就会按回退字体量宽度，下划线、手绘边、气泡宽度全部偏差。
 
 ## 改尺寸与复用
 
@@ -124,3 +125,4 @@ ffprobe -v error -show_entries stream=codec_name,width,height,r_frame_rate,nb_fr
 - 只想换音乐风格：改 `audio.js` 顶部的和弦表 `CH`、`bpm` 和各声部增益，参考 `references/audio-recipes.md`。
 - 预览：浏览器直接打开 `index.html`（音频读 `out/music.wav`，先跑一次 audio.js）。
 - 讲解类（知识点、课程）用漫画风：分镜格落下、对白气泡、角色、公式逐块写出、盖章。做法与样例项目见 `references/comic-explainer.md`。
+- 字体：讲解 / 科普类默认「标题马善政毛笔楷书 + 正文思源黑体 500 + 学名 EB Garamond 斜体」，站酷快乐体只用于低龄向。下载地址、接入写法、字号表、五套备选方案见 `references/fonts.md`。
