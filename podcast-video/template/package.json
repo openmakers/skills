@@ -1,0 +1,14 @@
+{
+  "name": "podcast-video",
+  "private": true,
+  "description": "播客样式解读视频：双人对白配音驱动时间轴，音频海报画面，Playwright 逐帧截图，ffmpeg 编码",
+  "scripts": {
+    "tts": "node tts.js",
+    "audio": "node audio.js",
+    "still": "node render.js --still",
+    "render": "node audio.js && node render.js"
+  },
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}

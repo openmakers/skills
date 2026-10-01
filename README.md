@@ -23,6 +23,7 @@ Agent skills for Claude Code and other agent CLIs. Each top-level directory is o
 | [code-coach](code-coach/) | 代码教练：把任意代码仓库讲给开发者听 | 接手陌生项目、给新人做入职讲解、读懂开源仓库、面试前突击理解一个代码库 |
 | [web-frame-video](web-frame-video/) | 网页逐帧视频：把产品介绍、功能演示、知识点漫画讲解写成网页，逐帧截图出 MP4 | 产品宣传片、功能演示视频、发布预告、漫画风知识讲解、给视频配音加字幕 |
 | [ai-concept-video](ai-concept-video/) | AI 科普讲解视频：只写分镜脚本，配音决定节奏，自动排画面与字幕 | 讲清一个 AI 概念（Skill、MCP、Agent 等）、教一套 AI 方法、盘点一批 AI 工具 |
+| [podcast-video](podcast-video/) | 播客样式解读视频：两位主持人一问一答，竖屏音频海报画面，声波跟着真实人声起伏 | 读书播客、书籍 / 文章解读、双人对谈视频、听书短视频 |
 
 ## 安装
 
@@ -105,7 +106,18 @@ bash code-coach/scripts/repo_scan.sh <仓库路径> --months 6
 
 `template/` 是「什么是 Skill」的完整源码（11 场、26 句旁白、约 130 秒）。
 
-### 两个视频技能的依赖
+## podcast-video 播客样式解读视频
+
+把一本书、一篇文章或一个观点做成两个人聊天的播客视频。只写一份对白（谁说、说什么、哪一章、要点卡挂在哪句），`tts.js` 用两个音色逐句配音，按真实时长把句子首尾接起来，同时算出每句的音量包络；画面和配乐都从这份结果里取时间，改一句台词只需重新配音。
+
+- 竖屏音频海报：模糊封面做背景、封面卡缓慢推近、声波按真实人声起伏、说话人头像高亮、字幕逐字点亮
+- 分章贴纸与要点卡挂在具体台词上，随对话弹出
+- 代码合成 Lo-fi 配乐，有人说话时自动压低；换章轻铃、要点卡提示音
+- `references/script.md` 讲双人对白怎么写：角色分工、每章节奏、字数估算、要点卡挑法
+
+`template/` 是《原子习惯》解读样片的完整源码（19 句对白、6 章、约 86 秒）。字体不随仓库分发，按 `SKILL.md` 从 Google Fonts 下载。
+
+### 三个视频技能的依赖
 
 - Node 18+、ffmpeg（含 ffprobe），`npm i` 安装 Playwright
 - 配音走 OpenAI 兼容的 `/v1/audio/speech` 接口，模型 `speech-2.8-hd`：设置 `TTS_BASE_URL` 与 `TTS_API_KEY`。不配音可以跳过

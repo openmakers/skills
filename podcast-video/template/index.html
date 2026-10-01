@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>播客解读 · 音频海报</title>
+<style>
+  /* 书名：马善政毛笔楷书；其余：思源黑体（可变字重）。均为 SIL OFL 开源字体 */
+  @font-face { font-family: 'Brush'; src: url('assets/MaShanZheng-Regular.ttf') format('truetype'); }
+  @font-face { font-family: 'NotoSC'; src: url('assets/NotoSansSC-Variable.ttf') format('truetype'); font-weight: 100 900; }
+  html, body { margin: 0; background: #111; overflow: hidden; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #1B1822; transform-origin: 0 0;
+    font-family: 'NotoSC', 'PingFang SC', sans-serif; font-weight: 500; color: #fff; }
+  .abs { position: absolute; }
+
+  /* 背景：封面放大模糊 + 压暗，整片随时间缓慢漂移 */
+  #bg { position: absolute; left: -240px; top: -240px; width: 1560px; height: 2400px; opacity: .92; }
+  #shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20, 16, 28, .35) 0%, rgba(20, 16, 28, .55) 45%, rgba(16, 13, 22, .86) 100%); }
+  #grain { position: absolute; inset: -40px; opacity: .07; background-image: radial-gradient(rgba(255, 255, 255, .9) 1px, transparent 1.2px); background-size: 6px 6px; }
+
+  /* 顶栏 */
+  #show { left: 120px; top: 84px; display: flex; align-items: center; gap: 14px; font-size: 34px; font-weight: 700; letter-spacing: 2px; }
+  #show .dot { width: 54px; height: 54px; border-radius: 50%; background: rgba(255, 255, 255, .16); display: flex; align-items: center; justify-content: center; }
+  #ep { right: 120px; top: 92px; font-size: 30px; font-weight: 700; letter-spacing: 3px; color: rgba(255, 255, 255, .72); }
+
+  /* 封面卡 */
+  #cover { left: 120px; top: 200px; width: 840px; height: 840px; border-radius: 34px; overflow: hidden; box-shadow: 0 40px 90px rgba(0, 0, 0, .45), 0 0 0 1px rgba(255, 255, 255, .08); }
+  #cover img { width: 100%; height: 100%; object-fit: cover; transform-origin: 40% 70%; }
+  #chap { left: 152px; top: 232px; display: flex; align-items: center; gap: 12px; padding: 10px 24px 12px 14px; border-radius: 40px; background: rgba(255, 255, 255, .94); color: #23202B; font-size: 32px; font-weight: 700; box-shadow: 0 8px 24px rgba(0, 0, 0, .18); }
+  #chap .no { min-width: 44px; height: 44px; border-radius: 22px; background: #23202B; color: #fff; font-size: 24px; display: flex; align-items: center; justify-content: center; letter-spacing: 1px; }
+  .key { left: 540px; top: 1004px; transform-origin: 50% 100%; padding: 22px 40px 26px; border-radius: 26px; background: rgba(255, 255, 255, .96); color: #23202B; font-size: 52px; font-weight: 800; line-height: 1.25; text-align: center; white-space: nowrap; box-shadow: 0 18px 50px rgba(0, 0, 0, .3); }
+  .key sup { font-size: .5em; }
+
+  /* 书名 */
+  #title { left: 0; width: 1080px; top: 1066px; text-align: center; font-family: 'Brush', serif; font-size: 112px; line-height: 1.15; text-shadow: 0 6px 24px rgba(0, 0, 0, .35); }
+  #author { left: 0; width: 1080px; top: 1206px; text-align: center; font-size: 32px; color: rgba(255, 255, 255, .72); letter-spacing: 1px; }
+
+  /* 声波与说话人 */
+  #wave { left: 120px; top: 1272px; width: 840px; height: 150px; }
+  .host { top: 1452px; display: flex; align-items: center; gap: 18px; }
+  .host .av { width: 78px; height: 78px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 800; color: #fff; box-shadow: 0 0 0 4px rgba(255, 255, 255, .0); }
+  .host .nm { font-size: 36px; font-weight: 700; line-height: 1.1; }
+  .host .rl { font-size: 26px; color: rgba(255, 255, 255, .62); margin-top: 4px; }
+  #hostA { left: 120px; }
+  #hostB { right: 120px; flex-direction: row-reverse; text-align: right; }
+
+  /* 字幕 */
+  #cap { left: 120px; width: 840px; top: 1580px; height: 190px; }
+  #cap .who { font-size: 30px; font-weight: 800; margin-bottom: 10px; letter-spacing: 1px; }
+  #cap .tx { font-size: 54px; font-weight: 700; line-height: 1.38; text-wrap: balance; }
+  #cap .tx span { color: rgba(255, 255, 255, .38); }
+  #cap .tx span.on { color: #fff; }
+
+  /* 进度条 */
+  #prog { left: 120px; top: 1812px; width: 840px; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, .2); }
+  #prog .fill { position: absolute; left: 0; top: 0; height: 8px; border-radius: 4px; background: #fff; }
+  #prog .tick { position: absolute; top: -5px; width: 4px; height: 18px; border-radius: 2px; background: rgba(255, 255, 255, .55); }
+  #tcur, #tend { top: 1836px; font-size: 26px; color: rgba(255, 255, 255, .7); font-variant-numeric: tabular-nums; }
+  #tcur { left: 120px; } #tend { right: 120px; }
+
+  #ctrl { display: none; position: fixed; left: 0; right: 0; bottom: 0; height: 44px; align-items: center; gap: 12px; padding: 0 14px; background: #111; color: #ddd; font: 14px -apple-system, sans-serif; }
+  #ctrl input { flex: 1; }
+  #ctrl button { background: #333; color: #eee; border: 0; padding: 6px 14px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="bg" width="780" height="1200"></canvas>
+  <div id="shade"></div>
+  <div id="grain"></div>
+
+  <div id="show" class="abs"><span class="dot"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><span id="showName"></span></div>
+  <div id="ep" class="abs"></div>
+
+  <div id="cover" class="abs"><img id="coverImg" alt=""></div>
+  <div id="chap" class="abs"><span class="no"></span><span class="tt"></span></div>
+  <div id="keys"></div>
+
+  <div id="title" class="abs"></div>
+  <div id="author" class="abs"></div>
+
+  <canvas id="wave" class="abs" width="1680" height="300"></canvas>
+  <div id="hostA" class="abs host"><div class="av"></div><div><div class="nm"></div><div class="rl"></div></div></div>
+  <div id="hostB" class="abs host"><div class="av"></div><div><div class="nm"></div><div class="rl"></div></div></div>
+
+  <div id="cap" class="abs"><div class="who"></div><div class="tx"></div></div>
+
+  <div id="prog" class="abs"><div class="fill"></div></div>
+  <div id="tcur" class="abs">00:00</div>
+  <div id="tend" class="abs">00:00</div>
+</div>
+<div id="ctrl"><button id="play">暂停</button><input id="scrub" type="range" min="0" step="0.01"><span id="tlabel">0.00</span></div>
+<audio id="music" src="out/preview.wav" preload="auto"></audio>
+
+<script src="voice.js"></script>
+<script src="timeline.js"></script>
+<script src="scenes.js"></script>
+</body>
+</html>
